@@ -4,145 +4,225 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumbs from "../components/Breadcrumbs";
 import CTASection from "../components/CTASection";
-import { Target, Lightbulb, ShieldWarning, CaretRight } from "@phosphor-icons/react";
+import { Lightbulb, ShieldWarning, Target } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 
 export default function About() {
-  const breadcrumbItems = [
-    { label: "About", href: "/about" }
-  ];
-
+  const breadcrumbItems = [{ label: "About", href: "/about" }];
   const springTransition = { type: "spring", stiffness: 100, damping: 20 };
 
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-[#FBF9F4]">
-      {/* Header */}
+    <div className="flex min-h-[100dvh] flex-col bg-[#FBF9F4]">
       <Header />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10">
-        
-        {/* Breadcrumbs */}
+      <main className="mx-auto w-full max-w-4xl flex-1 space-y-10 px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         <Breadcrumbs items={breadcrumbItems} />
 
-        {/* About Main Header Card */}
-        <motion.div 
+        <motion.section
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springTransition}
-          className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] p-8 sm:p-12 relative overflow-hidden"
+          className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] sm:p-12"
         >
-          
-          
           <div className="space-y-6">
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 tracking-tighter">
+            <h1 className="font-serif text-3xl font-bold tracking-tighter text-slate-800 sm:text-4xl lg:text-5xl">
               About the Platform
             </h1>
-            
-            <p className="font-serif text-base sm:text-lg text-slate-700 leading-relaxed italic pl-4 py-1">
-              "This personal UPSC notes archive is created to organize Prelims, Mains, PSIR Optional and PYQ content in a simple, structured and revision-friendly format. The goal is to make UPSC preparation less scattered and more focused."
+
+            <p className="border-l-2 border-amber-500 py-1 pl-4 font-serif text-base leading-relaxed text-slate-700 italic sm:text-lg">
+              Welcome to{" "}
+              <a
+                href="https://ishteyaquerahman.in"
+                className="font-semibold text-amber-700 not-italic hover:text-amber-800"
+              >
+                ishteyaquerahman.in
+              </a>
+              , a premier, open-access digital sanctuary built for serious civil
+              services and competitive exam aspirants.
             </p>
 
-            <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-4 font-sans font-light">
+            <div className="space-y-4 font-sans text-sm leading-relaxed font-light text-slate-600 sm:text-base">
               <p>
-                Preparing for the Civil Services Examination (CSE) in India is often described as an exercise in information management. With thousands of pages of textbooks, magazines, newspapers, and coaching notes, aspirants easily find themselves overwhelmed by the sheer volume of study material.
-              </p>
-              <p>
-                This platform was built to address this exact challenge. By converting lengthy chapters into clean, core-concept bullet lists, and organizing them alongside relevant Previous Year Questions (PYQs), it facilitates active, visual recall.
+                Conceived, developed, and managed entirely by Triple Hash, this
+                platform bridges the gap between raw ambition and proven execution.
+                Our mission is simple: to democratize high-quality exam preparation
+                by providing direct, unrestricted access to the exact blueprint,
+                notes, and strategies used to conquer India&apos;s toughest examinations.
               </p>
             </div>
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* Multi-column Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          {/* Why This Website Exists */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...springTransition, delay: 0.1 }}
-            className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] p-6 sm:p-8 space-y-4"
-          >
-            <h3 className="font-serif text-xl font-bold text-slate-800 flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-700 shrink-0">
-                <Target className="h-4 w-4" weight="bold" />
-              </span>
-              <span>Why This Website Exists</span>
-            </h3>
-            <ul className="space-y-3 text-sm text-slate-600 font-sans font-light leading-relaxed">
-              <li className="flex items-start">
-                <span className="text-amber-600 mr-2">•</span>
-                <span><strong>No coaching bloat:</strong> Eliminates fluff and keeps notes strictly mapped to the keywords of the UPSC syllabus.</span>
+        <motion.section
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...springTransition, delay: 0.1 }}
+          className="space-y-6 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] sm:p-8"
+        >
+          <h2 className="flex items-center gap-3 font-serif text-2xl font-bold text-slate-800">
+            <span className="shrink-0 rounded-xl bg-amber-500/10 p-2 text-amber-700">
+              <Target className="h-5 w-5" weight="bold" />
+            </span>
+            <span>The Visionary Behind the Blueprint: Md Ishteyaque Rahman</span>
+          </h2>
+
+          <div className="space-y-4 font-sans text-sm leading-relaxed font-light text-slate-600 sm:text-base">
+            <p>
+              This platform operates under the direct guidance and intellectual
+              mentorship of Md Ishteyaque Rahman, an extraordinary achiever who has
+              redefined what it means to navigate competitive exams successfully.
+              Ishteyaque&apos;s journey is not just a story of a single triumph; it is a
+              masterclass in versatility, resilience, and strategic mastery across
+              both national and state-level landscapes.
+            </p>
+            <p>His stellar credentials speak for themselves:</p>
+
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                <span>
+                  <strong className="font-semibold text-slate-800">
+                    UPSC Civil Services Examination (CSE) 2025:
+                  </strong>{" "}
+                  Secured Rank 354 in his third attempt, backed by the rare experience
+                  of facing back-to-back UPSC interviews in 2024 and 2025.
+                </span>
               </li>
-              <li className="flex items-start">
-                <span className="text-amber-600 mr-2">•</span>
-                <span><strong>Repeated visual revision:</strong> Lined notebook page displays optimize reading focus and facilitate memory retention.</span>
+              <li className="flex items-start gap-3">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                <span>
+                  <strong className="font-semibold text-slate-800">
+                    70th BPSC Combined Competitive Examination:
+                  </strong>{" "}
+                  Achieved a phenomenal Rank 11 in his very first attempt.
+                </span>
               </li>
-              <li className="flex items-start">
-                <span className="text-amber-600 mr-2">•</span>
-                <span><strong>Integrated learning:</strong> Integrates Prelims facts with Mains analyses and direct subject-wise PYQs.</span>
+              <li className="flex items-start gap-3">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                <span>
+                  <strong className="font-semibold text-slate-800">
+                    A Proven Track Record of Success:
+                  </strong>{" "}
+                  Beyond UPSC and BPSC, he has consistently cleared an array of highly
+                  competitive examinations, including the CDS, AFCAT, CAPF, CSIR (SO),
+                  and IB ACIO.
+                </span>
               </li>
             </ul>
-          </motion.div>
 
-          {/* How to Use the Notes */}
-          <motion.div 
+            <p>
+              Ishteyaque knows the exact pulse of competitive exams—he understands
+              what it takes to bounce back, how to fine-tune an interview strategy,
+              and how to crack multiple distinct formats simultaneously.
+            </p>
+          </div>
+        </motion.section>
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <motion.section
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...springTransition, delay: 0.15 }}
-            className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] p-6 sm:p-8 space-y-4"
+            className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] sm:p-8"
           >
-            <h3 className="font-serif text-xl font-bold text-slate-800 flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-emerald-50 text-emerald-700 shrink-0">
+            <h2 className="flex items-center gap-2 font-serif text-xl font-bold text-slate-800">
+              <span className="shrink-0 rounded-xl bg-emerald-50 p-2 text-emerald-700">
                 <Lightbulb className="h-4 w-4" weight="bold" />
               </span>
-              <span>How to Use the Notes</span>
-            </h3>
-            <ul className="space-y-3 text-sm text-slate-600 font-sans font-light leading-relaxed">
-              <li className="flex items-start">
-                <span className="text-emerald-600 mr-2">1.</span>
-                <span><strong>Select Category:</strong> Choose Prelims, Mains, or PSIR Optional based on your current study module.</span>
+              <span>Driven by Purpose, Free for Aspirants</span>
+            </h2>
+            <div className="space-y-4 font-sans text-sm leading-relaxed font-light text-slate-600">
+              <p>
+                True leaders lift others as they climb. In entering the civil services,
+                Md Ishteyaque Rahman&apos;s singular focus is public service. To honor this
+                spirit, he has completely separated himself from any commercial aspect
+                of this initiative. He has handed over the complete rights to own,
+                manage, use, and produce his academic resources to Triple Hash, ensuring
+                that he has zero financial association with the platform.
+              </p>
+              <p>
+                Because of this selfless contribution, Triple Hash has committed to
+                keeping the core repository of Ishteyaque&apos;s preparation material
+                entirely free and accessible for aspirants worldwide. This website is
+                not a commercial coaching venture; it is a collaborative repository
+                designed to act as your digital mentor.
+              </p>
+            </div>
+          </motion.section>
+
+          <motion.section
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...springTransition, delay: 0.2 }}
+            className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] sm:p-8"
+          >
+            <h2 className="flex items-center gap-2 font-serif text-xl font-bold text-slate-800">
+              <span className="shrink-0 rounded-xl bg-amber-500/10 p-2 text-amber-700">
+                <Target className="h-4 w-4" weight="bold" />
+              </span>
+              <span>What You Will Find Here</span>
+            </h2>
+            <p className="font-sans text-sm leading-relaxed font-light text-slate-600">
+              We believe in clutter-free, high-yield preparation. The website features
+              a meticulously organized ecosystem of resources:
+            </p>
+            <ul className="space-y-3 font-sans text-sm leading-relaxed font-light text-slate-600">
+              <li>
+                <strong className="font-semibold text-slate-800">The Master Notes:</strong>{" "}
+                Dive into the comprehensive, handwritten, and curated notes that
+                Ishteyaque used to clear UPSC and state PCS exams.
               </li>
-              <li className="flex items-start">
-                <span className="text-emerald-600 mr-2">2.</span>
-                <span><strong>Interactive Reading:</strong> Open a topic in the notes viewer, adjusting the zoom to your screen comfort.</span>
+              <li>
+                <strong className="font-semibold text-slate-800">Evaluated Answer Copies:</strong>{" "}
+                Learn the art of presentation. Study his actual mains answer sheets to
+                understand how to structure high-scoring answers under pressure.
               </li>
-              <li className="flex items-start">
-                <span className="text-emerald-600 mr-2">3.</span>
-                <span><strong>Review PYQs:</strong> Study the attached UPSC PYQs at the bottom of the notes viewer to understand question patterns.</span>
+              <li>
+                <strong className="font-semibold text-slate-800">Micro-Strategies:</strong>{" "}
+                Tailored articles breaking down everything from cracking the BPSC in a
+                single shot to sustaining momentum across consecutive UPSC interview cycles.
+              </li>
+              <li>
+                <strong className="font-semibold text-slate-800">Live Strategy Blogs:</strong>{" "}
+                Education is dynamic. Ishteyaque will be regularly contributing exclusive
+                blog posts to keep you aligned with the evolving demands of competitive
+                exams, changing patterns, and current affairs.
               </li>
             </ul>
-          </motion.div>
-
+          </motion.section>
         </div>
 
-        {/* Disclaimer Card */}
-        <motion.div 
-          id="disclaimer" 
+        <motion.section
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ...springTransition, delay: 0.2 }}
-          className="bg-amber-500/[0.04] border border-amber-500/20 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xs"
+          transition={{ ...springTransition, delay: 0.25 }}
+          className="space-y-4 rounded-2xl border border-amber-500/20 bg-amber-500/[0.04] p-6 shadow-xs sm:p-8"
         >
-          <h3 className="font-serif text-xl font-bold text-amber-900 flex items-center gap-2">
-            <ShieldWarning className="h-5 w-5 text-amber-700 shrink-0" weight="regular" />
-            <span>Important Disclaimer</span>
-          </h3>
-          <p className="text-slate-705 text-sm leading-relaxed font-sans font-light">
-            This is a personal, educational platform created strictly for learning, revision, and reference purposes. While every effort is made to maintain factual accuracy, UPSC requirements and dynamic current affairs evolve constantly. 
-          </p>
-          <p className="text-slate-755 text-sm leading-relaxed font-semibold font-sans">
-            Students should independently verify all facts, census statistics, constitutional amendments, notifications, and examination dates from official UPSC and government portals (such as PIB, gazette papers, or official ministry websites) before final exam submissions.
-          </p>
-        </motion.div>
+          <h2 className="flex items-center gap-2 font-serif text-xl font-bold text-amber-900">
+            <ShieldWarning className="h-5 w-5 shrink-0 text-amber-700" weight="regular" />
+            <span>A Note from Triple Hash</span>
+          </h2>
+          <div className="space-y-4 font-sans text-sm leading-relaxed font-light text-slate-600 sm:text-base">
+            <p>
+              At Triple Hash, we are incredibly proud to build and maintain this digital
+              bridge between a brilliant topper and millions of hopeful aspirants. We have
+              designed this platform to be seamless, intuitive, and lightning-fast, ensuring
+              that nothing stands between you and your study material.
+            </p>
+            <p>
+              Success leaves clues. Here, those clues are laid bare, organized, and handed
+              to you for free. Dive into the resources, study the strategy, stay consistent,
+              and let Ishteyaque&apos;s blueprint guide you to your own laurel.
+            </p>
+            <p className="font-serif text-lg font-semibold text-amber-900">
+              Your journey from aspirant to achiever starts right here.
+            </p>
+          </div>
+        </motion.section>
 
-        {/* Bottom CTA */}
         <CTASection />
-
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
