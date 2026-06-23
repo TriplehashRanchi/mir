@@ -78,7 +78,7 @@ export default function BpscResourceLibrary() {
 
   return (
     <div className="space-y-14">
-      <section className="space-y-6">
+      <section id="notes" className="scroll-mt-28 space-y-6">
         <div className="border-b border-amber-200/50 pb-3">
           <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800 sm:text-2xl"><span className="rounded-xl bg-amber-50 p-2 text-amber-700"><Note className="h-4 w-4" weight="bold" /></span>BPSC Notes</h2>
           <p className="mt-1 text-sm text-slate-500">All uploaded BPSC notes, without subcategories.</p>
@@ -88,7 +88,7 @@ export default function BpscResourceLibrary() {
         </div>
       </section>
 
-      <section className="space-y-6">
+      <section id="practice" className="scroll-mt-28 space-y-6">
         <div className="flex flex-col gap-2 border-b border-amber-200/50 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div><h2 className="flex items-center gap-2 text-xl font-bold text-slate-800 sm:text-2xl"><span className="rounded-xl bg-rose-50 p-2 text-rose-700"><FilePdf className="h-4 w-4" weight="bold" /></span>BPSC Answer Copies</h2><p className="mt-1 text-sm text-slate-500">Uploaded actual papers and practice answer-writing copies.</p></div>
           <div className="flex gap-3 text-xs font-medium text-slate-500"><span className="flex items-center gap-1"><CheckCircle className="h-4 w-4 text-emerald-600" weight="fill" />Actual paper</span><span className="flex items-center gap-1"><PencilLine className="h-4 w-4 text-blue-600" weight="bold" />Practice</span></div>

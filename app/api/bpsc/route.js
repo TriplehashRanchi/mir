@@ -4,12 +4,12 @@ import { ANSWER_COPY_PREFIX, BPSC_NOTES_PREFIX, getR2Client, getR2Config } from 
 
 export const dynamic = "force-dynamic";
 
-const resourceDescriptions = new Map(
+const resourceMeta = new Map(
   [
     ...bpscData.notes,
     ...bpscData.copies.actual,
     ...bpscData.copies.practice,
-  ].map((resource) => [resource.objectKey, resource.description]),
+  ].map((resource) => [resource.objectKey, resource]),
 );
 
 function displayTitle(fileName, stripUnchecked = false) {
@@ -24,10 +24,11 @@ function displayTitle(fileName, stripUnchecked = false) {
 
 function toResource(object, prefix, kind) {
   const fileName = object.Key.slice(prefix.length);
+  const meta = resourceMeta.get(object.Key);
   return {
     id: Buffer.from(object.Key).toString("base64url"),
-    title: displayTitle(fileName, kind === "real"),
-    description: resourceDescriptions.get(object.Key) || "",
+    title: meta?.title || displayTitle(fileName, kind === "real"),
+    description: meta?.description || "",
     fileName,
     kind,
     size: object.Size || 0,

@@ -115,7 +115,14 @@ export default function Header() {
         { name: "Paper 2 Sec B", href: "/notes?category=PSIR+Optional&subject=Paper+2+Section+B", desc: "India's Foreign Policy & Bilaterals" },
       ],
     },
-    { name: "BPSC", href: "/bpsc" },
+    {
+      name: "BPSC",
+      href: "/bpsc",
+      dropdown: [
+        { name: "Notes", href: "/bpsc#notes", desc: "Subject-wise BPSC study notes" },
+        { name: "Practice", href: "/bpsc#practice", desc: "Actual papers & practice answer copies" },
+      ],
+    },
     { name: "PYQ", href: "/pyq" },
  
   ];
@@ -144,7 +151,12 @@ export default function Header() {
               if (isDropdown) {
                 const isDropdownActive = activeDropdown === link.name.toLowerCase();
                 return (
-                  <div key={link.name} className="relative">
+                  <div
+                    key={link.name}
+                    className="relative"
+                    onMouseEnter={() => setActiveDropdown(link.name.toLowerCase())}
+                    onMouseLeave={() => setActiveDropdown(null)}
+                  >
                     <button
                       onClick={() => toggleDropdown(link.name.toLowerCase())}
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-1 cursor-pointer active:scale-[0.97] hover:scale-[1.02] ${
@@ -164,10 +176,13 @@ export default function Header() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.97 }}
                           transition={{ type: "spring", stiffness: 350, damping: 26 }}
-                          className={`absolute right-0 mt-6 rounded-lg bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-5 z-50 transform origin-top-right ${
-                            link.dropdown.length > 4 ? "w-[34rem] grid grid-cols-2 gap-2" : "w-72 flex flex-col gap-1"
-                          }`}
+                          className="absolute right-0 top-full z-50 origin-top-right pt-3"
                         >
+                          <div
+                            className={`rounded-lg bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-5 ${
+                              link.dropdown.length > 4 ? "w-[34rem] grid grid-cols-2 gap-2" : "w-72 flex flex-col gap-1"
+                            }`}
+                          >
                           <div className="col-span-full border-b border-slate-100 pb-2.5 mb-2 px-1.5 flex justify-between items-center">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                               {link.name} Notes
@@ -199,6 +214,7 @@ export default function Header() {
                               )}
                             </Link>
                           ))}
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
