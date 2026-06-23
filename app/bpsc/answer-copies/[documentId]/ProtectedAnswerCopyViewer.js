@@ -2,16 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CaretLeft, CaretRight, Minus, Plus, ShieldCheck } from "@phosphor-icons/react";
+import { Minus, Plus, ShieldCheck } from "@phosphor-icons/react";
 import { useAuth } from "@/app/context/AuthContext";
 import GoogleAuthModal from "@/app/components/GoogleAuthModal";
 import Header from "@/app/components/Header";
 
+function WatermarkOverlay({ text }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 grid grid-cols-2 place-items-center gap-28 overflow-hidden opacity-[0.12]">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <span key={i} className="-rotate-30 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-slate-900">
+          {text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function ProtectedAnswerCopyViewer({ documentId, title }) {
   const { user, loading: authLoading } = useAuth();
-  const canvasRef = useRef(null);
+  const canvasRefs = useRef([]);
+  const pageWrapperRefs = useRef([]);
   const [pdf, setPdf] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(1.15);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +49,12 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
           withCredentials: false,
         });
         const loadedPdf = await loadingTask.promise;
-        if (!cancelled) setPdf(loadedPdf);
+        if (!cancelled) {
+          canvasRefs.current = [];
+          pageWrapperRefs.current = [];
+          setCurrentPage(1);
+          setPdf(loadedPdf);
+        }
       } catch (loadError) {
         if (!cancelled) setError(loadError.message || "Unable to render PDF.");
       } finally {
@@ -51,34 +69,63 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
     };
   }, [documentId, user]);
 
+  // Render every page stacked vertically; re-render all pages when zoom changes.
   useEffect(() => {
-    if (!pdf || !canvasRef.current) return;
-    let renderTask;
+    if (!pdf) return;
     let cancelled = false;
+    const renderTasks = [];
 
-    async function renderPage() {
-      const page = await pdf.getPage(pageNumber);
-      if (cancelled) return;
-      const viewport = page.getViewport({ scale: zoom });
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d", { alpha: false });
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(viewport.width * ratio);
-      canvas.height = Math.floor(viewport.height * ratio);
-      canvas.style.width = `${viewport.width}px`;
-      canvas.style.height = `${viewport.height}px`;
-      renderTask = page.render({ canvasContext: context, viewport, transform: ratio === 1 ? null : [ratio, 0, 0, ratio, 0, 0] });
-      await renderTask.promise;
+    async function renderAllPages() {
+      for (let number = 1; number <= pdf.numPages; number += 1) {
+        if (cancelled) return;
+        const canvas = canvasRefs.current[number - 1];
+        if (!canvas) continue;
+        const page = await pdf.getPage(number);
+        if (cancelled) return;
+        const viewport = page.getViewport({ scale: zoom });
+        const context = canvas.getContext("2d", { alpha: false });
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(viewport.width * ratio);
+        canvas.height = Math.floor(viewport.height * ratio);
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+        const task = page.render({ canvasContext: context, viewport, transform: ratio === 1 ? null : [ratio, 0, 0, ratio, 0, 0] });
+        renderTasks.push(task);
+        try {
+          await task.promise;
+        } catch (renderError) {
+          if (renderError?.name !== "RenderingCancelledException") throw renderError;
+        }
+      }
     }
 
-    renderPage().catch((renderError) => {
-      if (renderError?.name !== "RenderingCancelledException") setError("Unable to render this PDF page.");
+    renderAllPages().catch(() => {
+      if (!cancelled) setError("Unable to render this PDF page.");
     });
+
     return () => {
       cancelled = true;
-      renderTask?.cancel();
+      renderTasks.forEach((task) => task.cancel());
     };
-  }, [pageNumber, pdf, zoom]);
+  }, [pdf, zoom]);
+
+  // Track which page is centered in the viewport for the live indicator.
+  useEffect(() => {
+    if (!pdf) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const number = Number(entry.target.dataset.page);
+            if (number) setCurrentPage(number);
+          }
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+    pageWrapperRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [pdf, zoom]);
 
   useEffect(() => {
     function blockShortcuts(event) {
@@ -99,7 +146,7 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <div className="min-w-0"><Link href="/bpsc" className="text-xs font-semibold text-amber-400 hover:text-amber-300">Back to BPSC</Link><h1 className="truncate text-sm font-bold text-white sm:text-base">{title}</h1></div>
           <div className="flex shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-slate-900 p-1">
-            <button type="button" onClick={() => setZoom((value) => Math.max(0.7, value - 0.15))} className="cursor-pointer rounded-lg p-2 text-slate-300 hover:bg-white/10" aria-label="Zoom out"><Minus className="h-4 w-4" weight="bold" /></button>
+            <button type="button" onClick={() => setZoom((value) => Math.max(0.6, value - 0.15))} className="cursor-pointer rounded-lg p-2 text-slate-300 hover:bg-white/10" aria-label="Zoom out"><Minus className="h-4 w-4" weight="bold" /></button>
             <span className="w-12 text-center text-xs text-slate-300">{Math.round(zoom * 100)}%</span>
             <button type="button" onClick={() => setZoom((value) => Math.min(1.8, value + 0.15))} className="cursor-pointer rounded-lg p-2 text-slate-300 hover:bg-white/10" aria-label="Zoom in"><Plus className="h-4 w-4" weight="bold" /></button>
           </div>
@@ -110,13 +157,32 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
         {loading && <p className="text-center text-sm text-slate-300">Preparing secure viewer…</p>}
         {error && <p className="mx-auto max-w-xl rounded-xl bg-red-50 p-4 text-center text-sm text-red-700">{error}</p>}
         {pdf && (
-          <div className="mx-auto flex w-max min-w-full flex-col items-center">
-            <div className="relative overflow-hidden bg-white shadow-2xl"><canvas ref={canvasRef} className="block max-w-none" /><div className="pointer-events-none absolute inset-0 grid grid-cols-2 place-items-center gap-28 overflow-hidden opacity-[0.12]"><span className="-rotate-30 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-slate-900">{watermark}</span><span className="-rotate-30 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-slate-900">{watermark}</span><span className="-rotate-30 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-slate-900">{watermark}</span><span className="-rotate-30 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-slate-900">{watermark}</span></div></div>
-            <div className="mt-5 flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950 p-2 text-sm text-slate-300">
-              <button type="button" disabled={pageNumber === 1} onClick={() => setPageNumber((page) => page - 1)} className="cursor-pointer rounded-lg p-2 hover:bg-white/10 disabled:cursor-default disabled:opacity-30"><CaretLeft className="h-4 w-4" weight="bold" /></button>
-              <span><ShieldCheck className="mr-1 inline h-4 w-4 text-emerald-400" weight="fill" />Page {pageNumber} of {pdf.numPages}</span>
-              <button type="button" disabled={pageNumber === pdf.numPages} onClick={() => setPageNumber((page) => page + 1)} className="cursor-pointer rounded-lg p-2 hover:bg-white/10 disabled:cursor-default disabled:opacity-30"><CaretRight className="h-4 w-4" weight="bold" /></button>
-            </div>
+          <div className="mx-auto flex w-max min-w-full flex-col items-center gap-6 pb-16">
+            {Array.from({ length: pdf.numPages }).map((_, index) => (
+              <div
+                key={index}
+                data-page={index + 1}
+                ref={(el) => {
+                  pageWrapperRefs.current[index] = el;
+                }}
+                className="relative overflow-hidden bg-white shadow-2xl"
+              >
+                <canvas
+                  ref={(el) => {
+                    canvasRefs.current[index] = el;
+                  }}
+                  className="block max-w-none"
+                />
+                <WatermarkOverlay text={watermark} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {pdf && (
+          <div className="pointer-events-none sticky bottom-6 z-40 mx-auto flex w-max items-center gap-2 rounded-full border border-white/10 bg-slate-950/90 px-4 py-2 text-sm text-slate-200 shadow-xl backdrop-blur">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" weight="fill" />
+            Page {currentPage} of {pdf.numPages}
           </div>
         )}
       </main>
