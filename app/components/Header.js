@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { List, X, CaretDown, MagnifyingGlass, ArrowRight, SignOut } from "@phosphor-icons/react";
@@ -34,7 +35,24 @@ export default function Header() {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null); // 'prelims' | 'mains' | 'psir' | null
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Portals need the document; only render them after mount (avoids SSR mismatch)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock background scroll while the mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const previous = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previous;
+      };
+    }
+  }, [mobileMenuOpen]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -261,17 +279,23 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-xs" onClick={() => setMobileMenuOpen(false)} />
-      )}
+      {/* Mobile drawer + overlay — rendered in a portal at <body> so they sit
+          above the framer-motion hero layers instead of being trapped inside
+          this sticky/backdrop-blur header's stacking context. */}
+      {mounted &&
+        createPortal(
+          <>
+            {/* Mobile Drawer Overlay */}
+            {mobileMenuOpen && (
+              <div className="lg:hidden fixed inset-0 z-[90] bg-slate-900/20 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+            )}
 
-      {/* Mobile Menu Panel */}
-      <div
-        className={`lg:hidden fixed top-0 right-0 bottom-0 w-80 max-w-full bg-[#FDFBF7] shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+            {/* Mobile Menu Panel */}
+            <div
+              className={`lg:hidden fixed top-0 right-0 bottom-0 w-80 max-w-full bg-[#FDFBF7] shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out ${
+                mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
         <div className="flex items-center justify-between px-4 h-16 sm:h-20 border-b border-slate-200">
           <span className="font-serif text-lg font-bold text-slate-800">Navigation</span>
           <button
@@ -373,8 +397,11 @@ export default function Header() {
               </button>
             </div>
           )}
-        </div>
-      </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </header>
   );
 }
