@@ -88,13 +88,36 @@ export default function BpscResourceLibrary() {
         </div>
       </section>
 
-      <section id="practice" className="scroll-mt-28 space-y-6">
+      <section id="practice" className="scroll-mt-28 space-y-8">
         <div className="flex flex-col gap-2 border-b border-amber-200/50 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div><h2 className="flex items-center gap-2 text-xl font-bold text-slate-800 sm:text-2xl"><span className="rounded-xl bg-rose-50 p-2 text-rose-700"><FilePdf className="h-4 w-4" weight="bold" /></span>BPSC Answer Copies</h2><p className="mt-1 text-sm text-slate-500">Uploaded actual papers and practice answer-writing copies.</p></div>
           <div className="flex gap-3 text-xs font-medium text-slate-500"><span className="flex items-center gap-1"><CheckCircle className="h-4 w-4 text-emerald-600" weight="fill" />Actual paper</span><span className="flex items-center gap-1"><PencilLine className="h-4 w-4 text-blue-600" weight="bold" />Practice</span></div>
         </div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {[...data.copies.actual, ...data.copies.practice].map((copy) => <ResourceCard key={copy.id} resource={copy} onOpen={openResource} />)}
+
+        <div className="space-y-5">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle className="h-5 w-5 text-emerald-600" weight="fill" />
+            <div>
+              <h3 className="text-base font-bold text-slate-800 sm:text-lg">70th BPSC Mains Examination</h3>
+              <p className="mt-0.5 text-sm text-slate-500">The following answer copies are the actual day examination copy written in the 70th Mains exam.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {data.copies.actual.map((copy) => <ResourceCard key={copy.id} resource={copy} onOpen={openResource} />)}
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <div className="flex items-center gap-2.5">
+            <PencilLine className="h-5 w-5 text-blue-600" weight="bold" />
+            <div>
+              <h3 className="text-base font-bold text-slate-800 sm:text-lg">Mock Test Answer Copies</h3>
+              <p className="mt-0.5 text-sm text-slate-500">These are two sets of mock answer copies written a week before the final examination.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {data.copies.practice.map((copy) => <ResourceCard key={copy.id} resource={copy} onOpen={openResource} />)}
+          </div>
         </div>
       </section>
 
