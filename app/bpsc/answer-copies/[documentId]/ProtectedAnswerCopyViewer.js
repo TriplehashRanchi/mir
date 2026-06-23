@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Minus, Plus, ShieldCheck } from "@phosphor-icons/react";
+import { Minus, Plus } from "@phosphor-icons/react";
 import { useAuth } from "@/app/context/AuthContext";
 import GoogleAuthModal from "@/app/components/GoogleAuthModal";
 import Header from "@/app/components/Header";
@@ -26,6 +26,7 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
   const [pdf, setPdf] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(1.15);
+  const [scrolling, setScrolling] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [watermark, setWatermark] = useState("");
@@ -127,6 +128,27 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
     return () => observer.disconnect();
   }, [pdf, zoom]);
 
+  // Mobile screens are narrow — start zoomed out so the full page fits.
+  useEffect(() => {
+    if (window.innerWidth < 640) setZoom(0.6);
+  }, []);
+
+  // Show the page indicator only while scrolling, then fade it out.
+  useEffect(() => {
+    if (!pdf) return;
+    let timeout;
+    function handleScroll() {
+      setScrolling(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setScrolling(false), 1200);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll, { capture: true });
+      clearTimeout(timeout);
+    };
+  }, [pdf]);
+
   useEffect(() => {
     function blockShortcuts(event) {
       if ((event.ctrlKey || event.metaKey) && ["p", "s", "u"].includes(event.key.toLowerCase())) event.preventDefault();
@@ -180,9 +202,12 @@ export default function ProtectedAnswerCopyViewer({ documentId, title }) {
         )}
 
         {pdf && (
-          <div className="pointer-events-none sticky bottom-6 z-40 mx-auto flex w-max items-center gap-2 rounded-full border border-white/10 bg-slate-950/90 px-4 py-2 text-sm text-slate-200 shadow-xl backdrop-blur">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" weight="fill" />
-            Page {currentPage} of {pdf.numPages}
+          <div
+            className={`pointer-events-none fixed bottom-6 right-4 z-50 flex w-max items-center rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-700 shadow-xl backdrop-blur transition-opacity duration-300 sm:right-6 ${
+              scrolling ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <span className="tabular-nums">{currentPage} / {pdf.numPages}</span>
           </div>
         )}
       </main>
